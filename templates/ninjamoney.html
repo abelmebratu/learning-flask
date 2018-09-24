@@ -1,0 +1,72 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<main class="container">
+    <div>Your Gold: {{total_gold}}</div>
+    <div class="row">
+        <div class="card col-md">
+            <form method="POST" action="/process_money" class="card-body">
+                <h5 class="card-title">Farm</h5>
+                <p class="card-text">(earns 10-20 golds)</p>
+                {{ form_for_farm.hidden_tag() }}
+
+                {{ form_for_farm.submit(class="btn btn-primary")}}  
+            </form>
+        </div>
+
+        <div class="card col-md">
+            <form method="POST" action="/process_money" class="card-body">
+                <h5 class="card-title">Cave</h5>
+                <p class="card-text">(earns 5-10 golds)</p>
+                {{ form_for_cave.hidden_tag() }}
+
+                {{ form_for_cave.submit(class="btn btn-primary")}}  
+            </form>
+        </div>
+
+        <div class="card col-md">
+            <form method="POST" action="/process_money" class="card-body">
+                <h5 class="card-title">House</h5>
+                <p class="card-text">(earns 2-5 golds)</p>
+                {{ form_for_house.hidden_tag() }}
+
+                {{ form_for_house.submit(class="btn btn-primary")}}  
+            </form>
+        </div>
+        <div class="card col-md">
+            <form method="POST" action="/process_money" class="card-body">
+                <h5 class="card-title">Casino</h5>
+                <p class="card-text">(earns/takes 0-50 golds)</p>
+                {{ form_for_casino.hidden_tag() }}
+
+                {{ form_for_casino.submit(class="btn btn-primary")}}  
+            </form>
+        </div>
+    </div>
+
+    <!-- <div class="section-content">
+        <h4>Activities(from session):</h4>
+
+        
+        {%for gold in gold_activity %}
+            {%if gold > 0 %}
+                <div class="alert alert-success">Earned {{gold}} golds from the TODO PLACE TODO DATETIME </div>
+            {%else%}
+                <div class="alert alert-danger">Entered a casino and lost {{gold * -1}} golds... Ouch.. (TODO DATETIME)</div>
+            {%endif%}
+        {%endfor%}
+    </div> -->
+
+    <h4>Activities:</h4>
+    <div class="section-content" style="overflow:auto;max-height:400px">
+        {%for i in range((activities|length)-1, -1, -1) %}
+            {%if activities[i].amount > 0 %}
+                <div class="alert alert-success">Earned {{activities[i].amount}} golds from the {{activities[i].place}}! ({{activities[i].datetime}}) </div>
+            {%else%}
+                <div class="alert alert-danger">Entered a casino and lost {{activities[i].amount * -1}} golds... Ouch.. ({{activities[i].datetime}})</div>
+            {%endif%}
+        {%endfor%}
+    </div>
+    
+</main>
+{%endblock%}

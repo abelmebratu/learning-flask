@@ -1,5 +1,5 @@
 from flask_wtf import Form
-from wtforms import StringField, PasswordField, SubmitField, DecimalField
+from wtforms import StringField, PasswordField, SubmitField, DecimalField, HiddenField
 
 class SignupForm(Form):
     total_gold = DecimalField("Total Gold")
@@ -8,4 +8,12 @@ class SignupForm(Form):
     email = StringField("Email")
     password = PasswordField("Password")
     submit = SubmitField("Sign up")
+
+
+class NinjaMoneyForm(Form):
+    place = HiddenField("Place")
+    submit = SubmitField("Find Gold!")
+
+
+
     

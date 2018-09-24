@@ -1,56 +1,71 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request, redirect, session
 #from models import db
 from forms import SignupForm
-
+from forms import NinjaMoneyForm
+import random
+import json
+from datetime import datetime
 app = Flask(__name__)
 
 # app.config('SQLALCHEMY_DATABASE_URI') = 'postgresql://localhost/learningflask'
 # db.init_app(app)
 
-app.secret_key = "development"
+app.secret_key = "development2.0"
+
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    total_gold = calculate_total_gold()
+    form_for_farm = NinjaMoneyForm(place="farm")
+    form_for_cave = NinjaMoneyForm(place="cave")
+    form_for_house = NinjaMoneyForm(place="house")
+    form_for_casino = NinjaMoneyForm(place="casino")
+    activities = load_activities_from_session()
 
-@app.route("/about")
-def about():
-    return render_template("about.html")
+    return render_template("ninjamoney.html", total_gold = total_gold, activities=activities, 
+                            form_for_farm = form_for_farm, form_for_cave = form_for_cave, 
+                            form_for_house = form_for_house, form_for_casino=form_for_casino)
+      
 
-@app.route("/signup")
-def signup():
-    form = SignupForm()
-    form.total_gold = calculate_total_gold()
-    activities = get_activities()
-    return render_template("signup.html", form=form, activities = activities)
+@app.route("/process_money", methods=["GET", "POST"])
+def process_money():
+    if request.method == 'POST':
+        place_visited = request.form['place']
+        time_visited = datetime.now().strftime('%Y/%m/%d %I:%M %p')
+        gold_found = calculate_gold(place_visited)
+
+        current_activity = {'amount':gold_found, 'place':place_visited, 'datetime':time_visited}            
+
+        activities = load_activities_from_session()
+        activities.append(current_activity)
+        session['gold_found'] = json.dumps(activities)
+
+    return redirect("/")
+
+def load_activities_from_session():
+    gold_activity = []
+    if session.get("gold_found") is not None:
+        gold_activity = json.loads(session['gold_found'])
+    return gold_activity
+
+def calculate_gold(place_visited):
+    if place_visited == 'farm':
+        gold_found = random.randint(10,20)
+    elif place_visited == 'cave':
+        gold_found = random.randint(5,10)
+    elif place_visited == 'house':
+        gold_found = random.randint(2,5)
+    elif place_visited == 'casino':
+        gold_found = random.randint(-50,50)
+    return gold_found
 
 def calculate_total_gold():
-    #TODO: Implement method
-    return 25
-def get_activities():
-    #TODO: Implement method
-    activities = [
-        {'amount':15,
-        'place':'farm',
-        'datetime':'2013/09/03 6:15pm'
-        },
-        {'amount':7,
-        'place':'cave',
-        'datetime':'2013/09/03 4:13pm'
-        },
-        {'amount':5,
-        'place':'house',
-        'datetime':'2013/09/03 4:05pm'
-        },
-        {'amount':-50,
-        'place':'casino',
-        'datetime':'2013/09/03 4:04pm'
-        },
-        {'amount':-30,
-        'place':'casino',
-        'datetime':'2013/09/03 4:03pm'
-        }
-    ]
-    return activities
+    total_gold = 0
+    activities = load_activities_from_session()
+    for activity in activities:
+        total_gold = total_gold + activity['amount']
+    return total_gold
+
+
 if __name__ == "__main__":
      app.run(debug=True)
