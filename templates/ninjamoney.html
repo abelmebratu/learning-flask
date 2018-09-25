@@ -5,8 +5,13 @@
         <title>Ninja Money</title>
     </head>
     <body>
+        <div class="container">
+            <h5>Your Gold: {{total_gold}}</h5>
+            <form action="{{ url_for('new_game')}}">
+                <input class="btn btn-success" type="submit" value="New Game" />
+            </form>
+        </div>
         <main class="container">
-            <div>Your Gold: {{total_gold}}</div>
             <div class="row">
                 <div class="card col-md">
                     <form method="POST" action="/process_money" class="card-body">

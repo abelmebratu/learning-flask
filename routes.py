@@ -36,6 +36,11 @@ def process_money():
 
     return redirect("/")
 
+@app.route("/new_game")
+def new_game():
+    session['activities'] = None
+    return redirect("/")
+
 def load_activities_from_session():
     gold_activity = []
     if session.get("activities") is not None:
