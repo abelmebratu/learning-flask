@@ -1,17 +1,11 @@
 from flask import Flask, render_template, request, redirect, session
-#from models import db
-from forms import SignupForm
 from forms import NinjaMoneyForm
 import random
 import json
 from datetime import datetime
 app = Flask(__name__)
 
-# app.config('SQLALCHEMY_DATABASE_URI') = 'postgresql://localhost/learningflask'
-# db.init_app(app)
-
 app.secret_key = "development2.0"
-
 
 @app.route("/")
 def index():
@@ -38,14 +32,14 @@ def process_money():
 
         activities = load_activities_from_session()
         activities.append(current_activity)
-        session['gold_found'] = json.dumps(activities)
+        session['activities'] = json.dumps(activities)
 
     return redirect("/")
 
 def load_activities_from_session():
     gold_activity = []
-    if session.get("gold_found") is not None:
-        gold_activity = json.loads(session['gold_found'])
+    if session.get("activities") is not None:
+        gold_activity = json.loads(session['activities'])
     return gold_activity
 
 def calculate_gold(place_visited):
